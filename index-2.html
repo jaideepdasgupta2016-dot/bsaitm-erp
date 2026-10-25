@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BSAITM ERP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--ink:#1d2433;--muted:#6b7385;--line:#e3e7ef;--pri:#1f4fd1;--pri-soft:#e8eefc;--ok:#15803d;--ok-soft:#e3f4e8;--bad:#c62828;--bad-soft:#fdeaea;--warn:#b45309;--warn-soft:#fdf1df;--side:#101a33;--r:12px}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--pri)}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+.center{min-height:100vh;display:grid;place-items:center;padding:16px}
+.auth{width:100%;max-width:400px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px}
+.auth h2{margin:18px 0 4px;font-size:20px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
+.logo{width:36px;height:36px;border-radius:10px;background:var(--pri);color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px;flex:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:#fff;padding:9px 14px;border-radius:10px;cursor:pointer;font-weight:500;white-space:nowrap}
+.btn:hover{background:#f0f2f7}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn.pri:hover{filter:brightness(1.08)}
+.btn.ok{color:var(--ok);border-color:#bfe3cb}
+.btn.danger{color:var(--bad);border-color:#f2c4c4}
+.btn.sm{padding:5px 10px;font-size:13px;border-radius:8px}
+.btn.block{width:100%}
+.btn:disabled{opacity:.55;cursor:default}
+.linkbtn{background:none;border:0;color:var(--pri);cursor:pointer;padding:0;font-weight:500}
+label.f{display:block;font-size:13px;color:var(--muted);margin:0 0 4px;font-weight:500}
+.inp{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;min-width:0}
+.inp:focus{outline:3px solid var(--pri-soft);border-color:var(--pri)}
+.field{margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin:16px 0}
+.divider:before,.divider:after{content:"";flex:1;height:1px;background:var(--line)}
+.err{color:var(--bad);font-size:14px;min-height:20px;margin-top:8px}
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.side{background:var(--side);color:#c6cee3;padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;overflow-y:auto}
+.side .brand{color:#fff;padding:0 8px 20px}
+.nav a{display:block;padding:9px 12px;border-radius:9px;color:#c6cee3;text-decoration:none;margin-bottom:2px}
+.nav a:hover{background:#1b2648}
+.nav a.on{background:var(--pri);color:#fff}
+.me{margin-top:auto;border-top:1px solid #24304f;padding:14px 8px 0;font-size:13px}
+.me b{color:#fff;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.me .btn{margin-top:10px;background:transparent;color:#c6cee3;border-color:#2c3a5e}
+.topbar{display:none}
+main{padding:24px;min-width:0;max-width:1200px}
+h1{font-size:22px;margin:0 0 16px}
+h3{font-size:15px;margin:18px 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.stat .k{font-size:13px;color:var(--muted)}
+.stat .v{font-size:23px;font-weight:700;margin-top:4px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.toolbar .inp{flex:1 1 160px;width:auto}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:#fff}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:#f8f9fc;font-weight:600;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+tbody tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;background:#eef0f5;color:var(--muted)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.pri{background:var(--pri-soft);color:var(--pri)}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:14px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:9px 12px;cursor:pointer;color:var(--muted);font-weight:500;border-bottom:2px solid transparent;white-space:nowrap}
+.tabs button.on{color:var(--pri);border-bottom-color:var(--pri)}
+.arow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--line)}
+.arow:last-child{border-bottom:0}
+.pa{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:none}
+.pa button{border:0;background:#fff;padding:6px 14px;cursor:pointer;font-weight:600;color:var(--muted)}
+.pa button.p.on{background:var(--ok);color:#fff}
+.pa button.a.on{background:var(--bad);color:#fff}
+.empty{padding:28px 16px;text-align:center;color:var(--muted)}
+.dl{display:grid;grid-template-columns:160px 1fr;gap:7px 14px;font-size:14px;margin:0}
+.dl dt{color:var(--muted)}
+.dl dd{margin:0;word-break:break-word}
+.note{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:12px}
+.mbg{position:fixed;inset:0;background:rgba(15,20,35,.45);display:grid;place-items:center;padding:16px;z-index:50}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:640px;max-height:92vh;overflow:auto;padding:20px}
+.modal h2{margin:0 0 14px;font-size:18px}
+.mfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:10px;position:sticky;bottom:-20px;background:#fff;padding:10px 0 0}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--side);color:#fff;padding:10px 14px;border-radius:10px;z-index:60;font-size:14px;display:flex;gap:12px;align-items:center;max-width:calc(100% - 32px)}
+#toast.bad{background:var(--bad)}
+#toast button{background:#fff;color:var(--side);border:0;border-radius:7px;padding:5px 10px;font-weight:600;cursor:pointer}
+#scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:35}
+@media(max-width:860px){
+ .app{grid-template-columns:1fr}
+ .side{position:fixed;left:0;top:0;width:250px;z-index:40;transform:translateX(-105%);transition:transform .2s}
+ .side.open{transform:none}
+ .topbar{display:flex;align-items:center;gap:12px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+ main{padding:16px}
+}
+@media(max-width:560px){.grid2{grid-template-columns:1fr}.dl{grid-template-columns:1fr;gap:2px}.dl dd{margin-bottom:8px}}
+</style>
+</head>
+<body>
+
+<div id="boot" class="center"><div class="muted" id="bootMsg">Loading…</div></div>
+
+<div id="login" class="center hidden">
+  <div class="auth">
+    <div class="brand"><div class="logo" id="logoTxt">ERP</div><span id="collegeTxt">College ERP</span></div>
+    <h2 id="authTitle">Sign in</h2>
+    <div class="muted" style="font-size:14px">Students, parents, faculty and office staff</div>
+    <button class="btn block" style="margin-top:18px" onclick="ERP.google()">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+      Continue with Google
+    </button>
+    <div class="divider">or use email</div>
+    <form onsubmit="ERP.emailAuth(event)">
+      <div class="field hidden" id="nameField"><label class="f">Full name</label><input class="inp" id="lname" autocomplete="name"></div>
+      <div class="field"><label class="f">Email</label><input class="inp" id="lemail" type="email" required autocomplete="email"></div>
+      <div class="field"><label class="f">Password</label><input class="inp" id="lpw" type="password" required minlength="6" autocomplete="current-password"></div>
+      <button class="btn pri block" id="authBtn">Sign in</button>
+    </form>
+    <div class="err" id="authErr"></div>
+    <div style="display:flex;justify-content:space-between;font-size:14px;margin-top:6px">
+      <button class="linkbtn" id="modeBtn" onclick="ERP.toggleMode()">Create an account</button>
+      <button class="linkbtn" onclick="ERP.forgot()">Forgot password?</button>
+    </div>
+  </div>
+</div>
+
+<div id="pending" class="center hidden">
+  <div class="auth" style="text-align:center">
+    <div class="brand" style="justify-content:center"><div class="logo">⏳</div></div>
+    <h2>Waiting for approval</h2>
+    <p class="muted">You're signed in as <b id="pendEmail"></b>. The college office needs to approve your account and link it to your record. Please check back later.</p>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button class="btn pri" onclick="location.reload()">Check again</button>
+      <button class="btn" onclick="ERP.logout()">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<div id="app" class="app hidden">
+  <aside class="side" id="side">
+    <div class="brand"><div class="logo" id="logoTxt2">ERP</div><span id="collegeTxt2"></span></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="me"><b id="meName"></b><span id="meRole"></span><br><button class="btn sm" onclick="ERP.logout()">Sign out</button></div>
+  </aside>
+  <div style="min-width:0">
+    <div class="topbar"><button class="btn sm" onclick="ERP.toggleNav()" aria-label="Menu">☰</button><b id="topTitle"></b></div>
+    <main id="main"></main>
+  </div>
+</div>
+<div id="scrim" class="hidden" onclick="ERP.toggleNav()"></div>
+<div id="modalRoot"></div>
+<div id="toast" class="hidden"></div>
+
+<script type="module">
+/* =========================================================
+   1) SETTINGS — fill these in once
+   ========================================================= */
+const COLLEGE_NAME = "BSAITM";           // shown on screens and fee receipts
+const COLLEGE_FULL_NAME = "BSAITM";      // full name for receipts, e.g. "B.S. Academy of ..."
+const COLLEGE_ADDRESS = "";              // optional, printed on receipts
+
+// Firebase console → ⚙️ Project settings → General → Your apps → Web app → "SDK setup and configuration" → Config
+const firebaseConfig = {
+  apiKey: "AIzaSyCNggRvEbu794xvfN2vVYqhhRhwYaUdDpQ",
+  authDomain: "bsaitm-erp.firebaseapp.com",
+  projectId: "bsaitm-erp",
+  storageBucket: "bsaitm-erp.firebasestorage.app",
+  messagingSenderId: "675656009596",
+  appId: "1:675656009596:web:f3766b3350591f7ff786f9"
+};
+
+// The Google account(s) that become Admin automatically (lowercase). Must match firestore.rules.
+const ADMIN_EMAILS = ["jaideep.dasgupta2016@gmail.com"];
+
+const FEE_TYPES = ["Tuition","Admission","Exam","Development","Library","Hostel","Transport","Other"];
+const PAY_MODES = ["Cash","UPI","Bank transfer","Cheque","Card"];
+const LEAVE_TYPES = ["Casual","Sick","Earned","Duty","Other"];
+
+/* ========================================================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithPopup, signInWithRedirect, GoogleAuthProvider,
+  signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, updateProfile, signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc,
+  query, where, serverTimestamp, runTransaction
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const $ = s => document.querySelector(s);
+const ERP = window.ERP = {};
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const inr = n => "₹" + Number(n || 0).toLocaleString("en-IN");
+const numSort = (a, b) => String(a).localeCompare(String(b), undefined, {numeric: true});
+function today(){ const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+const fmtDate = s => s ? new Date(s + "T00:00:00").toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}) : "";
+const ROLE_LABEL = {admin:"Admin",faculty:"Faculty",student:"Student",parent:"Parent",pending:"Pending"};
+
+["collegeTxt","collegeTxt2","topTitle"].forEach(id => $("#"+id).textContent = COLLEGE_NAME + " ERP");
+["logoTxt","logoTxt2"].forEach(id => $("#"+id).textContent = COLLEGE_NAME.slice(0,2).toUpperCase());
+
+if (firebaseConfig.apiKey.startsWith("PASTE")) {
+  $("#bootMsg").innerHTML = "<b>Setup needed:</b> paste your Firebase config into index.html (section 1 at the top of the script).";
+  throw new Error("Firebase config missing");
+}
+
+const fbApp = initializeApp(firebaseConfig);
+const auth = getAuth(fbApp);
+const db = getFirestore(fbApp);
+let ME = null, CURRENT = null;
+const cache = {};
+
+function show(id){ ["boot","login","pending","app"].forEach(x => $("#"+x).classList.toggle("hidden", x !== id)); }
+
+/* ---------- toast & modal ---------- */
+let toastTimer;
+function toast(msg, type = "", action){
+  const t = $("#toast");
+  t.className = type; t.innerHTML = `<span>${esc(msg)}</span>`;
+  if (action){ const b = document.createElement("button"); b.textContent = action.label; b.onclick = () => { t.classList.add("hidden"); action.fn(); }; t.appendChild(b); }
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.add("hidden"), action ? 9000 : 3500);
+}
+function openModal(title, html, onSave, saveLabel = "Save"){
+  $("#modalRoot").innerHTML = `<div class="mbg"><form class="modal" id="mform" novalidate><h2>${esc(title)}</h2>${html}
+    <div class="mfoot"><button type="button" class="btn" id="mcancel">${onSave ? "Cancel" : "Close"}</button>${onSave ? `<button class="btn pri" id="msave">${esc(saveLabel)}</button>` : ""}</div></form></div>`;
+  $("#mcancel").onclick = closeModal;
+  $("#mform").onsubmit = async ev => {
+    ev.preventDefault();
+    if (!onSave) return closeModal();
+    const form = $("#mform");
+    if (!form.checkValidity()){ form.reportValidity(); return; }
+    const b = $("#msave"); b.disabled = true;
+    try { const r = await onSave(formData(form)); if (r !== false) closeModal(); }
+    catch(e){ console.error(e); toast(friendly(e), "bad"); }
+    finally { if (document.body.contains(b)) b.disabled = false; }
+  };
+}
+function closeModal(){ $("#modalRoot").innerHTML = ""; }
+function formData(form){ const o = {}; new FormData(form).forEach((v,k) => o[k] = typeof v === "string" ? v.trim() : v); return o; }
+function fld(name, label, val = "", type = "text", o = {}){
+  const req = o.req ? "required" : "";
+  if (type === "select") return `<div class="field"><label class="f">${label}</label><select class="inp" name="${name}" id="${o.id||""}" ${req}>${o.options.map(op => { const [v,t] = Array.isArray(op) ? op : [op,op]; return `<option value="${esc(v)}" ${String(v) === String(val ?? "") ? "selected" : ""}>${esc(t)}</option>`; }).join("")}</select></div>`;
+  if (type === "textarea") return `<div class="field"><label class="f">${label}</label><textarea class="inp" name="${name}" rows="2">${esc(val)}</textarea></div>`;
+  return `<div class="field"><label class="f">${label}</label><input class="inp" type="${type}" name="${name}" value="${esc(val)}" ${req} ${o.list ? `list="${o.list}"` : ""} ${o.attrs || ""}></div>`;
+}
+function friendly(e){
+  const c = e && e.code || "";
+  const map = {
+    "auth/invalid-credential":"Wrong email or password.", "auth/wrong-password":"Wrong email or password.",
+    "auth/user-not-found":"No account with this email.", "auth/email-already-in-use":"An account with this email already exists. Try signing in.",
+    "auth/weak-password":"Password must be at least 6 characters.", "auth/invalid-email":"Please enter a valid email.",
+    "auth/unauthorized-domain":"This website address is not in Firebase → Authentication → Settings → Authorized domains.",
+    "auth/popup-closed-by-user":"Sign-in window was closed.", "auth/too-many-requests":"Too many attempts. Try again in a few minutes.",
+    "permission-denied":"Permission denied. Check that the security rules are published and your role is set."
+  };
+  return map[c] || (e && e.message) || String(e);
+}
+
+/* ---------- auth ---------- */
+let authMode = "signin", pendingName = "";
+const authErr = m => $("#authErr").textContent = m;
+ERP.toggleMode = () => {
+  authMode = authMode === "signin" ? "signup" : "signin";
+  const up = authMode === "signup";
+  $("#nameField").classList.toggle("hidden", !up);
+  $("#authTitle").textContent = up ? "Create account" : "Sign in";
+  $("#authBtn").textContent = up ? "Create account" : "Sign in";
+  $("#modeBtn").textContent = up ? "I already have an account" : "Create an account";
+  $("#lpw").autocomplete = up ? "new-password" : "current-password";
+  authErr("");
+};
+ERP.google = async () => {
+  authErr("");
+  const p = new GoogleAuthProvider(); p.setCustomParameters({prompt:"select_account"});
+  try { await signInWithPopup(auth, p); }
+  catch(e){
+    if (["auth/popup-blocked","auth/operation-not-supported-in-this-environment"].includes(e.code)) await signInWithRedirect(auth, p);
+    else authErr(friendly(e));
+  }
+};
+ERP.emailAuth = async ev => {
+  ev.preventDefault(); authErr("");
+  const email = $("#lemail").value.trim(), pw = $("#lpw").value;
+  try {
+    if (authMode === "signup"){
+      const name = $("#lname").value.trim();
+      if (!name) return authErr("Please enter your full name.");
+      pendingName = name;
+      const cred = await createUserWithEmailAndPassword(auth, email, pw);
+      await updateProfile(cred.user, {displayName: name});
+    } else await signInWithEmailAndPassword(auth, email, pw);
+  } catch(e){ authErr(friendly(e)); }
+};
+ERP.forgot = async () => {
+  const email = $("#lemail").value.trim();
+  if (!email) return authErr("Type your email above first, then tap Forgot password.");
+  try { await sendPasswordResetEmail(auth, email); authErr(""); toast("Password reset email sent to " + email); }
+  catch(e){ authErr(friendly(e)); }
+};
+ERP.logout = () => signOut(auth).then(() => location.hash = "");
+ERP.toggleNav = () => { const open = !$("#side").classList.contains("open"); $("#side").classList.toggle("open", open); $("#scrim").classList.toggle("hidden", !open); };
+
+const isBootAdmin = u => u.emailVerified && ADMIN_EMAILS.map(x => x.toLowerCase()).includes((u.email || "").toLowerCase());
+
+onAuthStateChanged(auth, async user => {
+  if (!user){ show("login"); return; }
+  show("boot"); $("#bootMsg").textContent = "Loading your account…";
+  try {
+    const ref = doc(db, "users", user.uid);
+    let snap = await getDoc(ref);
+    if (!snap.exists()){
+      await setDoc(ref, {email: (user.email || "").toLowerCase(), name: pendingName || user.displayName || user.email, role: "pending", createdAt: serverTimestamp()});
+      snap = await getDoc(ref);
+    }
+    const data = snap.data();
+    if (isBootAdmin(user) && data.role !== "admin"){ await updateDoc(ref, {role: "admin"}); data.role = "admin"; }
+    ME = {uid: user.uid, email: user.email, name: data.name || user.email, role: data.role, studentId: data.studentId || null, staffId: data.staffId || null};
+    if (!NAV[ME.role]){ $("#pendEmail").textContent = user.email; show("pending"); return; }
+    startApp();
+  } catch(e){
+    console.error(e);
+    $("#bootMsg").innerHTML = `<b>Couldn't load your account.</b><br>${esc(friendly(e))}<br><br><button class="btn" onclick="ERP.logout()">Sign out</button>`;
+  }
+});
+
+/* ---------- navigation ---------- */
+const NAV = {
+  admin:   [["dashboard","Dashboard"],["students","Students"],["attendance","Attendance"],["fees","Fees"],["staff","Staff"],["leaves","Leave requests"],["users","Users & roles"]],
+  faculty: [["dashboard","Dashboard"],["students","Students"],["attendance","Attendance"],["myleave","My leave"]],
+  student: [["profile","My profile"],["myattendance","My attendance"],["myfees","My fees"]],
+  parent:  [["profile","My ward"],["myattendance","Attendance"],["myfees","Fees"]]
+};
+function startApp(){
+  $("#nav").innerHTML = NAV[ME.role].map(([v,t]) => `<a href="#${v}" data-v="${v}">${t}</a>`).join("");
+  $("#meName").textContent = ME.name;
+  $("#meRole").textContent = ROLE_LABEL[ME.role] + " · " + ME.email;
+  show("app");
+  render(location.hash.slice(1));
+}
+window.addEventListener("hashchange", () => { if (ME && NAV[ME.role]) render(location.hash.slice(1)); });
+async function render(view){
+  const nav = NAV[ME.role];
+  if (!nav.some(n => n[0] === view)) view = nav[0][0];
+  CURRENT = view;
+  document.querySelectorAll("#nav a").forEach(a => a.classList.toggle("on", a.dataset.v === view));
+  $("#side").classList.remove("open"); $("#scrim").classList.add("hidden");
+  const m = $("#main"); m.innerHTML = `<div class="empty">Loading…</div>`;
+  try { await VIEWS[view](m); }
+  catch(e){ console.error(e); m.innerHTML = `<div class="card"><b>Something went wrong.</b><div class="muted">${esc(friendly(e))}</div></div>`; }
+}
+ERP.refresh = () => render(CURRENT);
+
+/* ---------- data helpers ---------- */
+async function getAll(col){ const s = await getDocs(collection(db, col)); return s.docs.map(d => ({id: d.id, ...d.data()})); }
+const classKey = s => `${s.course}|${String(s.semester).padStart(3,"0")}|${s.rollNo}`;
+async function students(force){ if (force || !cache.students) cache.students = (await getAll("students")).sort((a,b) => numSort(classKey(a), classKey(b))); return cache.students; }
+async function staffList(force){ if (force || !cache.staff) cache.staff = (await getAll("staff")).sort((a,b) => (a.name||"").localeCompare(b.name||"")); return cache.staff; }
+async function feesList(force){ if (force || !cache.fees) cache.fees = (await getAll("fees")).sort((a,b) => (b.date||"").localeCompare(a.date||"") || (b.receiptNo||"").localeCompare(a.receiptNo||"")); return cache.fees; }
+const invalidate = (...k) => k.forEach(x => delete cache[x]);
+const activeOnly = list => list.filter(s => (s.status || "Active") === "Active");
+const coursesOf = list => [...new Set(list.map(s => s.course).filter(Boolean))].sort();
+function paidMap(fees){ const m = {}; fees.forEach(f => m[f.studentId] = (m[f.studentId] || 0) + Number(f.amount || 0)); return m; }
+const attId = (date, course, sem) => `${date}_${course}_${sem}`.replace(/[^\w-]/g, "_");
+const pct = (p, t) => t ? Math.round(p * 100 / t) : null;
+const pctPill = v => v === null ? `<span class="pill">—</span>` : `<span class="pill ${v >= 75 ? "ok" : v >= 60 ? "warn" : "bad"}">${v}%</span>`;
+const statusPill = s => { s = s || "Active"; return `<span class="pill ${s === "Active" || s === "Approved" ? "ok" : s === "Pending" ? "warn" : s === "Rejected" ? "bad" : ""}">${esc(s)}</span>`; };
+const stat = (k, v) => `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+
+async function studentAttendance(s){
+  const q = query(collection(db, "attendance"), where("course", "==", s.course), where("semester", "==", String(s.semester)));
+  const snap = await getDocs(q);
+  const list = [];
+  snap.docs.forEach(d => { const r = d.data(); const v = (r.records || {})[s.id]; if (v) list.push({date: r.date, v}); });
+  list.sort((a,b) => b.date.localeCompare(a.date));
+  const p = list.filter(x => x.v === "P").length;
+  return {p, t: list.length, list};
+}
+function studentDetails(s){
+  const rows = [["Roll / Reg. no.",s.rollNo],["Course",s.course],["Semester / Year",s.semester],["Status",s.status||"Active"],["Gender",s.gender],["Date of birth",fmtDate(s.dob)],["Phone",s.phone],["Email",s.email],["Parent / guardian",s.guardianName],["Parent phone",s.guardianPhone],["Parent email",s.guardianEmail],["Admission date",fmtDate(s.admissionDate)],["Address",s.address]];
+  return `<dl class="dl">${rows.filter(r => r[1]).map(([k,v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join("")}</dl>`;
+}
+function tabs(m, sel, map){
+  const bar = m.querySelector(".tabs");
+  const go = t => { bar.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.t === t)); Promise.resolve(map[t](m.querySelector(sel))).catch(e => { console.error(e); toast(friendly(e), "bad"); }); };
+  bar.querySelectorAll("button").forEach(b => b.onclick = () => go(b.dataset.t));
+  go(bar.querySelector("button").dataset.t);
+}
+function classPickerHTML(courses, p){
+  return `<select class="inp" id="${p}c" style="flex:1 1 150px">${courses.length ? courses.map(c => `<option>${esc(c)}</option>`).join("") : `<option value="">No students yet</option>`}</select><select class="inp" id="${p}s" style="flex:0 1 140px"></select>`;
+}
+function wireClassPicker(list, p){
+  const fill = () => { const c = $("#"+p+"c").value; const sems = [...new Set(list.filter(s => s.course === c).map(s => String(s.semester)))].sort(numSort); $("#"+p+"s").innerHTML = sems.map(s => `<option value="${esc(s)}">Sem/Yr ${esc(s)}</option>`).join(""); };
+  $("#"+p+"c").onchange = fill; fill();
+}
+
+/* ---------- printing ---------- */
+function amountWords(n){
+  n = Math.round(Number(n) || 0); if (!n) return "Zero";
+  const a = ["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+  const b = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+  const two = x => x < 20 ? a[x] : b[Math.floor(x/10)] + (x % 10 ? " " + a[x % 10] : "");
+  const three = x => (x >= 100 ? a[Math.floor(x/100)] + " Hundred" + (x % 100 ? " " : "") : "") + (x % 100 ? two(x % 100) : "");
+  const out = []; const cr = Math.floor(n/1e7); n %= 1e7; const lk = Math.floor(n/1e5); n %= 1e5; const th = Math.floor(n/1000); n %= 1000;
+  if (cr) out.push(amountWords(cr) + " Crore"); if (lk) out.push(two(lk) + " Lakh"); if (th) out.push(two(th) + " Thousand"); if (n) out.push(three(n));
+  return out.join(" ");
+}
+function printHTML(html){
+  let f = document.getElementById("pframe"); if (f) f.remove();
+  f = document.createElement("iframe"); f.id = "pframe"; f.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0";
+  document.body.appendChild(f);
+  const d = f.contentWindow.document; d.open(); d.write(html); d.close();
+  setTimeout(() => { f.contentWindow.focus(); f.contentWindow.print(); }, 350);
+}
+function printReceipt(f){
+  const row = (k, v) => `<tr><td>${k}</td><td><b>${esc(v)}</b></td></tr>`;
+  printHTML(`<!doctype html><html><head><meta charset="utf-8"><title>Receipt ${esc(f.receiptNo)}</title><style>
+    body{font-family:Arial,sans-serif;color:#111;margin:24px}.box{border:2px solid #111;padding:22px;max-width:640px;margin:auto}
+    h1{margin:0;font-size:22px;text-align:center}.sub{text-align:center;font-size:13px;color:#444;margin-top:4px}
+    h2{text-align:center;font-size:15px;letter-spacing:.15em;border:1px solid #111;display:table;margin:14px auto;padding:4px 14px}
+    table{width:100%;border-collapse:collapse;font-size:14px}td{padding:6px 4px;border-bottom:1px dashed #bbb}td:first-child{color:#444;width:42%}
+    .amt{font-size:20px;margin-top:14px}.sig{display:flex;justify-content:space-between;margin-top:48px;font-size:13px}.foot{text-align:center;font-size:11px;color:#666;margin-top:18px}
+  </style></head><body><div class="box">
+    <h1>${esc(COLLEGE_FULL_NAME)}</h1>${COLLEGE_ADDRESS ? `<div class="sub">${esc(COLLEGE_ADDRESS)}</div>` : ""}
+    <h2>FEE RECEIPT</h2>
+    <table>${row("Receipt no.", f.receiptNo)}${row("Date", fmtDate(f.date))}${row("Student name", f.studentName)}${row("Roll / Reg. no.", f.rollNo)}${row("Course / Sem", `${f.course} · ${f.semester}`)}${row("Fee type", f.feeType)}${row("Payment mode", f.mode + (f.reference ? " (" + f.reference + ")" : ""))}${f.note ? row("Note", f.note) : ""}</table>
+    <div class="amt">Amount received: <b>${inr(f.amount)}</b></div>
+    <div style="font-size:14px;margin-top:4px">Rupees ${esc(amountWords(f.amount))} only</div>
+    <div class="sig"><span>Received by: ${esc(f.receivedBy || "")}</span><span>Authorised signatory</span></div>
+    <div class="foot">This is a computer-generated receipt.</div>
+  </div></body></html>`);
+}
+ERP.printFee = async id => { const f = cache.fees?.find(x => x.id === id) || cache.myFees?.find(x => x.id === id); if (f) printReceipt(f); };
+
+const VIEWS = {};
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+VIEWS.dashboard = async m => {
+  const isA = ME.role === "admin";
+  const [st, attSnap] = await Promise.all([students(), getDocs(query(collection(db, "attendance"), where("date", "==", today())))]);
+  const act = activeOnly(st);
+  let p = 0, t = 0; attSnap.docs.forEach(d => Object.values(d.data().records || {}).forEach(v => { t++; if (v === "P") p++; }));
+  const cards = [stat("Active students", act.length), stat("Classes marked today", attSnap.size), stat("Today's attendance", t ? pct(p,t) + "%" : "—")];
+  let extra = "";
+  if (isA){
+    const [sf, fees, lv] = await Promise.all([staffList(), feesList(), getAll("leaves")]);
+    const ym = today().slice(0,7), pm = paidMap(fees);
+    const month = fees.filter(f => (f.date || "").startsWith(ym)).reduce((s,f) => s + Number(f.amount || 0), 0);
+    const due = act.reduce((s,x) => s + Math.max(0, Number(x.totalFee || 0) - (pm[x.id] || 0)), 0);
+    const pend = lv.filter(l => l.status === "Pending").length;
+    cards.push(stat("Staff", activeOnly(sf).length), stat("Fees collected this month", inr(month)), stat("Total fees due", inr(due)), stat("Pending leave requests", pend));
+    const recent = fees.slice(0, 6);
+    extra = `<h3>Recent fee payments</h3><div class="tw"><table><thead><tr><th>Date</th><th>Student</th><th>Type</th><th class="num">Amount</th></tr></thead><tbody>${recent.length ? recent.map(f => `<tr><td>${fmtDate(f.date)}</td><td>${esc(f.studentName)}</td><td>${esc(f.feeType)}</td><td class="num">${inr(f.amount)}</td></tr>`).join("") : `<tr><td colspan="4" class="empty">No payments yet.</td></tr>`}</tbody></table></div>`;
+    if (!st.length) extra = `<div class="note">Getting started: add students under <b>Students</b>, staff under <b>Staff</b>, then approve people's logins under <b>Users & roles</b>.</div>` + extra;
+  }
+  m.innerHTML = `<h1>Welcome, ${esc(ME.name)}</h1><div class="stats">${cards.join("")}</div>${extra}`;
+};
+
+/* =========================================================
+   STUDENTS
+   ========================================================= */
+VIEWS.students = async m => {
+  const isA = ME.role === "admin";
+  const st = await students();
+  const pm = isA ? paidMap(await feesList()) : {};
+  m.innerHTML = `<h1>Students <span class="muted" style="font-size:15px;font-weight:500">(${st.length})</span></h1>
+    <div class="toolbar"><input class="inp" id="sq" placeholder="Search name, roll, phone…">
+      <select class="inp" id="sc" style="flex:0 1 170px"><option value="">All courses</option>${coursesOf(st).map(c => `<option>${esc(c)}</option>`).join("")}</select>
+      <select class="inp" id="ss" style="flex:0 1 140px"><option value="Active">Active</option><option value="">All statuses</option><option>Passed out</option><option>Left</option></select>
+      ${isA ? `<button class="btn pri" onclick="ERP.editStudent()">+ Add student</button>` : ""}</div>
+    <div class="tw"><table><thead><tr><th>Roll</th><th>Name</th><th>Course</th><th>Sem/Yr</th><th>Phone</th><th>Status</th>${isA ? `<th class="num">Fee due</th>` : ""}<th></th></tr></thead><tbody id="sbody"></tbody></table></div>`;
+  const draw = () => {
+    const q = $("#sq").value.toLowerCase(), c = $("#sc").value, ss = $("#ss").value;
+    const rows = st.filter(s => (!c || s.course === c) && (!ss || (s.status || "Active") === ss) && (!q || [s.name, s.rollNo, s.phone, s.email, s.guardianName].join(" ").toLowerCase().includes(q)));
+    $("#sbody").innerHTML = rows.length ? rows.map(s => `<tr><td>${esc(s.rollNo)}</td><td><b>${esc(s.name)}</b></td><td>${esc(s.course)}</td><td>${esc(s.semester)}</td><td>${esc(s.phone)}</td><td>${statusPill(s.status)}</td>${isA ? `<td class="num">${inr(Math.max(0, Number(s.totalFee || 0) - (pm[s.id] || 0)))}</td>` : ""}<td><button class="btn sm" onclick="ERP.viewStudent('${s.id}')">View</button> ${isA ? `<button class="btn sm" onclick="ERP.editStudent('${s.id}')">Edit</button>` : ""}</td></tr>`).join("")
+      : `<tr><td colspan="8" class="empty">${st.length ? "No matching students." : "No students yet." + (isA ? " Tap “+ Add student” to begin." : "")}</td></tr>`;
+  };
+  $("#sq").oninput = draw; $("#sc").onchange = draw; $("#ss").onchange = draw; draw();
+};
+ERP.editStudent = async id => {
+  const st = await students();
+  const s = id ? st.find(x => x.id === id) : {status: "Active", admissionDate: today()};
+  openModal(id ? "Edit student" : "Add student", `<datalist id="dlc">${coursesOf(st).map(c => `<option value="${esc(c)}">`).join("")}</datalist>
+    <div class="grid2">
+      ${fld("rollNo","Roll / Reg. no. *",s.rollNo,"text",{req:1})}${fld("name","Full name *",s.name,"text",{req:1})}
+      ${fld("course","Course * (e.g. BCA, BBA)",s.course,"text",{req:1,list:"dlc"})}${fld("semester","Semester / Year *",s.semester,"text",{req:1,attrs:'placeholder="e.g. 1"'})}
+      ${fld("gender","Gender",s.gender,"select",{options:["","Male","Female","Other"]})}${fld("dob","Date of birth",s.dob,"date")}
+      ${fld("phone","Phone",s.phone,"tel")}${fld("email","Student email (for login)",s.email,"email")}
+      ${fld("guardianName","Parent / guardian name",s.guardianName)}${fld("guardianPhone","Parent phone",s.guardianPhone,"tel")}
+      ${fld("guardianEmail","Parent email (for login)",s.guardianEmail,"email")}${fld("admissionDate","Admission date",s.admissionDate,"date")}
+      ${fld("totalFee","Total course fee (₹)",s.totalFee,"number",{attrs:'min="0" step="1"'})}${fld("status","Status",s.status,"select",{options:["Active","Passed out","Left"]})}
+    </div>${fld("address","Address",s.address,"textarea")}
+    ${id ? `<button type="button" class="btn danger sm" onclick="ERP.delStudent('${id}')">Delete this student</button>` : ""}`,
+  async d => {
+    if (st.some(x => x.id !== id && String(x.rollNo).toLowerCase() === d.rollNo.toLowerCase())){ toast("Roll no. " + d.rollNo + " already exists.", "bad"); return false; }
+    d.totalFee = Number(d.totalFee || 0); d.email = d.email.toLowerCase(); d.guardianEmail = d.guardianEmail.toLowerCase(); d.updatedAt = serverTimestamp();
+    if (id) await updateDoc(doc(db, "students", id), d); else { d.createdAt = serverTimestamp(); await addDoc(collection(db, "students"), d); }
+    invalidate("students"); toast("Student saved"); ERP.refresh();
+  });
+};
+ERP.delStudent = async id => {
+  if (!confirm("Delete this student permanently? Their fee receipts stay, but the record is removed.")) return;
+  try { await deleteDoc(doc(db, "students", id)); invalidate("students"); closeModal(); toast("Student deleted"); ERP.refresh(); } catch(e){ toast(friendly(e), "bad"); }
+};
+ERP.viewStudent = async id => {
+  const s = (await students()).find(x => x.id === id); if (!s) return;
+  const a = await studentAttendance(s);
+  let fee = "";
+  if (ME.role === "admin"){
+    const f = (await feesList()).filter(x => x.studentId === id), paid = f.reduce((t,x) => t + Number(x.amount || 0), 0);
+    fee = `<h3>Fees</h3><div class="stats">${stat("Total fee", inr(s.totalFee))}${stat("Paid", inr(paid))}${stat("Due", inr(Math.max(0, Number(s.totalFee || 0) - paid)))}</div>
+      ${f.length ? `<div class="tw"><table><tbody>${f.map(x => `<tr><td>${fmtDate(x.date)}</td><td>${esc(x.feeType)}</td><td class="num">${inr(x.amount)}</td><td><button type="button" class="btn sm" onclick="ERP.printFee('${x.id}')">Receipt</button></td></tr>`).join("")}</tbody></table></div>` : ""}`;
+  }
+  openModal(s.name, studentDetails(s) + `<h3>Attendance</h3><div class="stats">${stat("Classes", a.t)}${stat("Present", a.p)}${stat("Attendance", pctPill(pct(a.p, a.t)))}</div>` + fee, null);
+};
+
+/* =========================================================
+   ATTENDANCE (admin + faculty)
+   ========================================================= */
+VIEWS.attendance = async m => {
+  const act = activeOnly(await students());
+  const courses = coursesOf(act);
+  m.innerHTML = `<h1>Attendance</h1><div class="tabs"><button data-t="mark">Mark attendance</button><button data-t="report">Monthly report</button></div><div id="atab"></div>`;
+  tabs(m, "#atab", {
+    mark: el => {
+      el.innerHTML = `<div class="card"><div class="toolbar"><input class="inp" type="date" id="ad" value="${today()}" max="${today()}" style="flex:0 1 170px">${classPickerHTML(courses,"am")}<button class="btn pri" id="aload">Load class</button></div><div id="alist" class="muted">Choose date and class, then tap “Load class”.</div></div>`;
+      wireClassPicker(act, "am");
+      $("#aload").onclick = async () => {
+        const date = $("#ad").value, c = $("#amc").value, sem = $("#ams").value;
+        if (!date || !c || !sem) return toast("Choose date, course and semester", "bad");
+        const list = act.filter(s => s.course === c && String(s.semester) === sem);
+        const ref = doc(db, "attendance", attId(date, c, sem));
+        const snap = await getDoc(ref);
+        const rec = snap.exists() ? {...(snap.data().records || {})} : {};
+        list.forEach(s => { if (!rec[s.id]) rec[s.id] = "P"; });
+        const box = $("#alist"); box.className = "";
+        const summary = () => { const ids = list.map(s => s.id); const p = ids.filter(i => rec[i] === "P").length; $("#asum").innerHTML = `<b>${p}</b> present · <b>${ids.length - p}</b> absent of ${ids.length}`; };
+        box.innerHTML = `${snap.exists() ? `<div class="note">Already marked by ${esc(snap.data().markedBy || "someone")}. You're editing it.</div>` : ""}
+          <div class="toolbar" style="justify-content:space-between"><span id="asum"></span><span><button class="btn sm" id="allp">All present</button> <button class="btn sm" id="alla">All absent</button></span></div>
+          <div>${list.map(s => `<div class="arow"><div><b>${esc(s.name)}</b><div class="muted" style="font-size:13px">${esc(s.rollNo)}</div></div><div class="pa" data-id="${s.id}"><button type="button" class="p ${rec[s.id] === "P" ? "on" : ""}">P</button><button type="button" class="a ${rec[s.id] === "A" ? "on" : ""}">A</button></div></div>`).join("")}</div>
+          <button class="btn pri block" id="asave" style="margin-top:14px">Save attendance</button>`;
+        const paint = () => box.querySelectorAll(".pa").forEach(g => { g.querySelector(".p").classList.toggle("on", rec[g.dataset.id] === "P"); g.querySelector(".a").classList.toggle("on", rec[g.dataset.id] === "A"); });
+        box.querySelectorAll(".pa").forEach(g => { g.querySelector(".p").onclick = () => { rec[g.dataset.id] = "P"; paint(); summary(); }; g.querySelector(".a").onclick = () => { rec[g.dataset.id] = "A"; paint(); summary(); }; });
+        $("#allp").onclick = () => { list.forEach(s => rec[s.id] = "P"); paint(); summary(); };
+        $("#alla").onclick = () => { list.forEach(s => rec[s.id] = "A"); paint(); summary(); };
+        summary();
+        $("#asave").onclick = async () => {
+          $("#asave").disabled = true;
+          try { await setDoc(ref, {date, course: c, semester: sem, records: rec, markedBy: ME.name, markedByUid: ME.uid, updatedAt: serverTimestamp()}); toast(`Attendance saved for ${c} · ${sem} on ${fmtDate(date)}`); }
+          catch(e){ toast(friendly(e), "bad"); } finally { $("#asave").disabled = false; }
+        };
+      };
+    },
+    report: el => {
+      el.innerHTML = `<div class="card"><div class="toolbar">${classPickerHTML(courses,"ar")}<input class="inp" type="month" id="arm" value="${today().slice(0,7)}" style="flex:0 1 170px"><button class="btn pri" id="arload">Show report</button></div><div id="arout" class="muted">Choose a class and month.</div></div>`;
+      wireClassPicker(act, "ar");
+      $("#arload").onclick = async () => {
+        const c = $("#arc").value, sem = $("#ars").value, mon = $("#arm").value;
+        if (!c || !sem) return;
+        const snap = await getDocs(query(collection(db, "attendance"), where("course", "==", c), where("semester", "==", sem)));
+        const days = snap.docs.map(d => d.data()).filter(d => !mon || (d.date || "").startsWith(mon));
+        const list = act.filter(s => s.course === c && String(s.semester) === sem);
+        const rows = list.map(s => { let p = 0, t = 0; days.forEach(d => { const v = (d.records || {})[s.id]; if (v){ t++; if (v === "P") p++; } }); return {s, p, t}; });
+        const out = $("#arout"); out.className = "";
+        out.innerHTML = `<p class="muted" style="margin:0 0 10px">${days.length} class day(s) recorded. Below 75% is highlighted.</p>
+          <div class="tw"><table><thead><tr><th>Roll</th><th>Name</th><th class="num">Present</th><th class="num">Absent</th><th class="num">%</th></tr></thead><tbody>${rows.map(r => `<tr><td>${esc(r.s.rollNo)}</td><td>${esc(r.s.name)}</td><td class="num">${r.p}</td><td class="num">${r.t - r.p}</td><td class="num">${pctPill(pct(r.p, r.t))}</td></tr>`).join("") || `<tr><td colspan="5" class="empty">No students in this class.</td></tr>`}</tbody></table></div>`;
+      };
+    }
+  });
+};
+
+/* =========================================================
+   FEES (admin)
+   ========================================================= */
+VIEWS.fees = async m => {
+  const [st, fees] = await Promise.all([students(), feesList()]);
+  const pm = paidMap(fees);
+  m.innerHTML = `<h1>Fees</h1><div class="toolbar"><button class="btn pri" onclick="ERP.collectFee()">+ Collect fee</button></div>
+    <div class="tabs"><button data-t="pay">Payments</button><button data-t="dues">Dues</button></div><div id="ftab"></div>`;
+  tabs(m, "#ftab", {
+    pay: el => {
+      el.innerHTML = `<div class="toolbar"><input class="inp" id="fq" placeholder="Search student, receipt…"><input class="inp" type="month" id="fm" value="${today().slice(0,7)}" style="flex:0 1 170px"></div><div id="ftot" class="muted" style="margin-bottom:8px"></div>
+        <div class="tw"><table><thead><tr><th>Receipt</th><th>Date</th><th>Student</th><th>Type</th><th>Mode</th><th class="num">Amount</th><th></th></tr></thead><tbody id="fbody"></tbody></table></div>`;
+      const draw = () => {
+        const q = $("#fq").value.toLowerCase(), mon = $("#fm").value;
+        const rows = fees.filter(f => (!mon || (f.date || "").startsWith(mon)) && (!q || [f.studentName, f.rollNo, f.receiptNo].join(" ").toLowerCase().includes(q)));
+        $("#ftot").innerHTML = `${rows.length} payment(s) · Total <b>${inr(rows.reduce((s,f) => s + Number(f.amount || 0), 0))}</b>${mon ? "" : " (all time)"}`;
+        $("#fbody").innerHTML = rows.map(f => `<tr><td>${esc(f.receiptNo)}</td><td>${fmtDate(f.date)}</td><td><b>${esc(f.studentName)}</b> <span class="muted">${esc(f.rollNo)}</span></td><td>${esc(f.feeType)}</td><td>${esc(f.mode)}</td><td class="num">${inr(f.amount)}</td><td><button class="btn sm" onclick="ERP.printFee('${f.id}')">Print</button> <button class="btn sm danger" onclick="ERP.delFee('${f.id}')">Delete</button></td></tr>`).join("") || `<tr><td colspan="7" class="empty">No payments for this period. Clear the month to see all.</td></tr>`;
+      };
+      $("#fq").oninput = draw; $("#fm").onchange = draw; draw();
+    },
+    dues: el => {
+      el.innerHTML = `<div class="toolbar"><input class="inp" id="dq" placeholder="Search student…"><select class="inp" id="dc" style="flex:0 1 170px"><option value="">All courses</option>${coursesOf(st).map(c => `<option>${esc(c)}</option>`).join("")}</select><label style="display:flex;gap:6px;align-items:center;font-size:14px"><input type="checkbox" id="donly" checked> Only with dues</label></div>
+        <div id="dtot" class="muted" style="margin-bottom:8px"></div>
+        <div class="tw"><table><thead><tr><th>Roll</th><th>Name</th><th>Course</th><th class="num">Total</th><th class="num">Paid</th><th class="num">Due</th><th></th></tr></thead><tbody id="dbody"></tbody></table></div>`;
+      const draw = () => {
+        const q = $("#dq").value.toLowerCase(), c = $("#dc").value, only = $("#donly").checked;
+        const rows = activeOnly(st).map(s => ({s, paid: pm[s.id] || 0, due: Math.max(0, Number(s.totalFee || 0) - (pm[s.id] || 0))}))
+          .filter(r => (!c || r.s.course === c) && (!only || r.due > 0) && (!q || [r.s.name, r.s.rollNo].join(" ").toLowerCase().includes(q)))
+          .sort((a,b) => b.due - a.due);
+        $("#dtot").innerHTML = `${rows.length} student(s) · Total due <b>${inr(rows.reduce((t,r) => t + r.due, 0))}</b>`;
+        $("#dbody").innerHTML = rows.map(r => `<tr><td>${esc(r.s.rollNo)}</td><td><b>${esc(r.s.name)}</b></td><td>${esc(r.s.course)} · ${esc(r.s.semester)}</td><td class="num">${inr(r.s.totalFee)}</td><td class="num">${inr(r.paid)}</td><td class="num"><b>${inr(r.due)}</b></td><td><button class="btn sm" onclick="ERP.collectFee('${r.s.id}')">Collect</button></td></tr>`).join("") || `<tr><td colspan="7" class="empty">No dues. Set each student's “Total course fee” in Students to track dues.</td></tr>`;
+      };
+      $("#dq").oninput = draw; $("#dc").onchange = draw; $("#donly").onchange = draw; draw();
+    }
+  });
+};
+ERP.collectFee = async preId => {
+  const [st, fees] = await Promise.all([students(), feesList()]);
+  const pm = paidMap(fees);
+  const act = activeOnly(st);
+  if (!act.length) return toast("Add students first.", "bad");
+  const opt = (s, sel = preId) => `<option value="${s.id}" ${s.id === sel ? "selected" : ""}>${esc(s.rollNo)} — ${esc(s.name)} (${esc(s.course)} ${esc(s.semester)})</option>`;
+  openModal("Collect fee", `<div class="field"><label class="f">Find student</label><input class="inp" id="fsq" placeholder="Type name or roll no."></div>
+    <div class="field"><label class="f">Student *</label><select class="inp" name="studentId" id="fsid" required><option value="">— choose —</option>${act.map(opt).join("")}</select></div>
+    <div id="finfo" class="muted" style="margin:-4px 0 12px;font-size:14px"></div>
+    <div class="grid2">${fld("feeType","Fee type","Tuition","select",{options:FEE_TYPES})}${fld("amount","Amount (₹) *","","number",{req:1,attrs:'min="1" step="1" inputmode="numeric"'})}
+    ${fld("mode","Payment mode","Cash","select",{options:PAY_MODES})}${fld("reference","UPI / cheque ref. (optional)","")}
+    ${fld("date","Date *",today(),"date",{req:1})}${fld("note","Note (optional)","")}</div>`,
+  async d => {
+    const s = st.find(x => x.id === d.studentId); const amt = Number(d.amount);
+    if (!s){ toast("Choose a student", "bad"); return false; }
+    if (!(amt > 0)){ toast("Enter a valid amount", "bad"); return false; }
+    const year = d.date.slice(0,4), ref = doc(collection(db, "fees"));
+    const rec = await runTransaction(db, async tx => {
+      const cref = doc(db, "meta", "counters"); const cs = await tx.get(cref);
+      const n = ((cs.exists() && cs.data()["receipt_" + year]) || 0) + 1;
+      tx.set(cref, {["receipt_" + year]: n}, {merge: true});
+      const r = {studentId: s.id, studentName: s.name, rollNo: s.rollNo, course: s.course, semester: String(s.semester), feeType: d.feeType, amount: amt, mode: d.mode, reference: d.reference, date: d.date, note: d.note,
+        receiptNo: `${COLLEGE_NAME}/${year}/${String(n).padStart(4,"0")}`, receivedBy: ME.name, createdAt: serverTimestamp()};
+      tx.set(ref, r); return r;
+    });
+    invalidate("fees"); ERP.refresh();
+    toast("Fee recorded · " + rec.receiptNo, "", {label: "Print receipt", fn: () => printReceipt({id: ref.id, ...rec})});
+  }, "Save payment");
+  const info = () => { const s = st.find(x => x.id === $("#fsid").value); $("#finfo").innerHTML = s ? `Total fee ${inr(s.totalFee)} · Paid ${inr(pm[s.id] || 0)} · <b>Due ${inr(Math.max(0, Number(s.totalFee || 0) - (pm[s.id] || 0)))}</b>` : ""; };
+  $("#fsid").onchange = info; info();
+  $("#fsq").oninput = () => { const q = $("#fsq").value.toLowerCase(); const keep = $("#fsid").value; const list = act.filter(s => !q || [s.name, s.rollNo].join(" ").toLowerCase().includes(q)); $("#fsid").innerHTML = `<option value="">— choose (${list.length}) —</option>` + list.map(s => opt(s, keep)).join(""); if (list.length === 1){ $("#fsid").value = list[0].id; } info(); };
+};
+ERP.delFee = async id => {
+  if (!confirm("Delete this payment? Use only to fix a mistake.")) return;
+  try { await deleteDoc(doc(db, "fees", id)); invalidate("fees"); toast("Payment deleted"); ERP.refresh(); } catch(e){ toast(friendly(e), "bad"); }
+};
+
+/* =========================================================
+   STAFF (admin)
+   ========================================================= */
+VIEWS.staff = async m => {
+  const sf = await staffList();
+  m.innerHTML = `<h1>Staff <span class="muted" style="font-size:15px;font-weight:500">(${sf.length})</span></h1>
+    <div class="toolbar"><input class="inp" id="stq" placeholder="Search name, department…"><button class="btn pri" onclick="ERP.editStaff()">+ Add staff</button></div>
+    <div class="tw"><table><thead><tr><th>Emp. ID</th><th>Name</th><th>Designation</th><th>Department</th><th>Phone</th><th>Status</th><th></th></tr></thead><tbody id="stbody"></tbody></table></div>`;
+  const draw = () => {
+    const q = $("#stq").value.toLowerCase();
+    const rows = sf.filter(s => !q || [s.name, s.empId, s.department, s.designation].join(" ").toLowerCase().includes(q));
+    $("#stbody").innerHTML = rows.map(s => `<tr><td>${esc(s.empId)}</td><td><b>${esc(s.name)}</b></td><td>${esc(s.designation)}</td><td>${esc(s.department)}</td><td>${esc(s.phone)}</td><td>${statusPill(s.status)}</td><td><button class="btn sm" onclick="ERP.editStaff('${s.id}')">Edit</button></td></tr>`).join("") || `<tr><td colspan="7" class="empty">No staff yet. Tap “+ Add staff”.</td></tr>`;
+  };
+  $("#stq").oninput = draw; draw();
+};
+ERP.editStaff = async id => {
+  const sf = await staffList();
+  const s = id ? sf.find(x => x.id === id) : {status: "Active", joinDate: today()};
+  openModal(id ? "Edit staff" : "Add staff", `<datalist id="dld">${[...new Set(sf.map(x => x.department).filter(Boolean))].map(x => `<option value="${esc(x)}">`).join("")}</datalist><div class="grid2">
+    ${fld("empId","Employee ID *",s.empId,"text",{req:1})}${fld("name","Full name *",s.name,"text",{req:1})}
+    ${fld("designation","Designation",s.designation,"text",{attrs:'placeholder="e.g. Assistant Professor"'})}${fld("department","Department",s.department,"text",{list:"dld"})}
+    ${fld("phone","Phone",s.phone,"tel")}${fld("email","Email (for login)",s.email,"email")}
+    ${fld("joinDate","Joining date",s.joinDate,"date")}${fld("status","Status",s.status,"select",{options:["Active","On leave","Left"]})}</div>
+    ${fld("address","Address",s.address,"textarea")}
+    ${id ? `<button type="button" class="btn danger sm" onclick="ERP.delStaff('${id}')">Delete this staff member</button>` : ""}`,
+  async d => {
+    if (sf.some(x => x.id !== id && String(x.empId).toLowerCase() === d.empId.toLowerCase())){ toast("Employee ID already exists.", "bad"); return false; }
+    d.email = d.email.toLowerCase(); d.updatedAt = serverTimestamp();
+    if (id) await updateDoc(doc(db, "staff", id), d); else { d.createdAt = serverTimestamp(); await addDoc(collection(db, "staff"), d); }
+    invalidate("staff"); toast("Staff saved"); ERP.refresh();
+  });
+};
+ERP.delStaff = async id => {
+  if (!confirm("Delete this staff record permanently?")) return;
+  try { await deleteDoc(doc(db, "staff", id)); invalidate("staff"); closeModal(); toast("Deleted"); ERP.refresh(); } catch(e){ toast(friendly(e), "bad"); }
+};
+
+/* =========================================================
+   LEAVE
+   ========================================================= */
+const leaveDays = (a, b) => Math.max(1, Math.round((new Date(b) - new Date(a)) / 86400000) + 1);
+const leaveRow = (l, admin) => `<tr><td>${admin ? `<b>${esc(l.name)}</b>` : esc(l.type)}</td>${admin ? `<td>${esc(l.type)}</td>` : ""}<td>${fmtDate(l.from)} → ${fmtDate(l.to)}</td><td class="num">${l.days}</td><td style="white-space:normal;min-width:160px">${esc(l.reason)}</td><td>${statusPill(l.status)}</td>${admin ? `<td>${l.status === "Pending" ? `<button class="btn sm ok" onclick="ERP.decideLeave('${l.id}','Approved')">Approve</button> <button class="btn sm danger" onclick="ERP.decideLeave('${l.id}','Rejected')">Reject</button>` : `<span class="muted" style="font-size:13px">${esc(l.decidedBy || "")}</span>`}</td>` : ""}</tr>`;
+VIEWS.leaves = async m => {
+  const lv = (await getAll("leaves")).sort((a,b) => (b.from || "").localeCompare(a.from || ""));
+  m.innerHTML = `<h1>Leave requests</h1><div class="tabs"><button data-t="Pending">Pending (${lv.filter(l => l.status === "Pending").length})</button><button data-t="all">All</button></div><div id="ltab"></div>`;
+  const tbl = rows => `<div class="tw"><table><thead><tr><th>Name</th><th>Type</th><th>Dates</th><th class="num">Days</th><th>Reason</th><th>Status</th><th></th></tr></thead><tbody>${rows.map(l => leaveRow(l, true)).join("") || `<tr><td colspan="7" class="empty">Nothing here.</td></tr>`}</tbody></table></div>`;
+  tabs(m, "#ltab", {Pending: el => el.innerHTML = tbl(lv.filter(l => l.status === "Pending")), all: el => el.innerHTML = tbl(lv)});
+};
+ERP.decideLeave = async (id, status) => {
+  try { await updateDoc(doc(db, "leaves", id), {status, decidedBy: ME.name, decidedAt: serverTimestamp()}); toast("Leave " + status.toLowerCase()); ERP.refresh(); } catch(e){ toast(friendly(e), "bad"); }
+};
+VIEWS.myleave = async m => {
+  const snap = await getDocs(query(collection(db, "leaves"), where("uid", "==", ME.uid)));
+  const lv = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (b.from || "").localeCompare(a.from || ""));
+  m.innerHTML = `<h1>My leave</h1><div class="toolbar"><button class="btn pri" onclick="ERP.applyLeave()">+ Apply for leave</button></div>
+    <div class="tw"><table><thead><tr><th>Type</th><th>Dates</th><th class="num">Days</th><th>Reason</th><th>Status</th></tr></thead><tbody>${lv.map(l => leaveRow(l, false)).join("") || `<tr><td colspan="5" class="empty">No leave applications yet.</td></tr>`}</tbody></table></div>`;
+};
+ERP.applyLeave = () => openModal("Apply for leave", `<div class="grid2">${fld("type","Leave type","Casual","select",{options:LEAVE_TYPES})}<div></div>${fld("from","From *",today(),"date",{req:1})}${fld("to","To *",today(),"date",{req:1})}</div>${fld("reason","Reason","","textarea")}`,
+  async d => {
+    if (d.to < d.from){ toast("“To” date is before “From” date", "bad"); return false; }
+    await addDoc(collection(db, "leaves"), {uid: ME.uid, name: ME.name, email: ME.email, type: d.type, from: d.from, to: d.to, days: leaveDays(d.from, d.to), reason: d.reason, status: "Pending", createdAt: serverTimestamp()});
+    toast("Leave application sent"); ERP.refresh();
+  }, "Submit");
+
+/* =========================================================
+   USERS & ROLES (admin)
+   ========================================================= */
+VIEWS.users = async m => {
+  const [us, st, sf] = await Promise.all([getAll("users"), students(), staffList()]);
+  const order = {pending: 0, admin: 1, faculty: 2, student: 3, parent: 4};
+  us.sort((a,b) => (order[a.role] ?? 9) - (order[b.role] ?? 9) || (a.name || "").localeCompare(b.name || ""));
+  const suggest = u => {
+    const e = (u.email || "").toLowerCase();
+    let x = sf.find(s => s.email === e); if (x) return {role: "faculty", link: x.id};
+    x = st.find(s => s.email === e); if (x) return {role: "student", link: x.id};
+    x = st.find(s => s.guardianEmail === e); if (x) return {role: "parent", link: x.id};
+    return null;
+  };
+  const linkOpts = (role, val) => {
+    if (role === "student" || role === "parent") return `<option value="">— link to student —</option>` + st.map(s => `<option value="${s.id}" ${s.id === val ? "selected" : ""}>${esc(s.rollNo)} — ${esc(s.name)}</option>`).join("");
+    if (role === "faculty" || role === "admin") return `<option value="">— staff record (optional) —</option>` + sf.map(s => `<option value="${s.id}" ${s.id === val ? "selected" : ""}>${esc(s.empId)} — ${esc(s.name)}</option>`).join("");
+    return `<option value="">—</option>`;
+  };
+  const pend = us.filter(u => u.role === "pending").length;
+  m.innerHTML = `<h1>Users & roles</h1>
+    <p class="muted" style="margin-top:-8px">People sign in first, then appear here as <b>Pending</b>. Pick their role and link them to their record. Students and parents must be linked to a student to see anything.${pend ? ` <b>${pend} waiting.</b>` : ""}</p>
+    <div class="tw"><table><thead><tr><th>Name / email</th><th>Role</th><th>Linked record</th><th></th></tr></thead><tbody>${us.map(u => {
+      const sg = u.role === "pending" ? suggest(u) : null;
+      const role = sg ? sg.role : u.role, link = sg ? sg.link : (u.studentId || u.staffId || "");
+      return `<tr data-uid="${u.id}"><td><b>${esc(u.name)}</b><div class="muted" style="font-size:13px">${esc(u.email)}</div>${sg ? `<span class="pill pri">Suggested match</span>` : u.role === "pending" ? `<span class="pill warn">Pending</span>` : ""}</td>
+        <td><select class="inp urole" style="min-width:120px">${["pending","admin","faculty","student","parent"].map(r => `<option value="${r}" ${r === role ? "selected" : ""}>${ROLE_LABEL[r]}</option>`).join("")}</select></td>
+        <td><select class="inp ulink" style="min-width:200px">${linkOpts(role, link)}</select></td>
+        <td><button class="btn sm pri usave">Save</button></td></tr>`;
+    }).join("") || `<tr><td colspan="4" class="empty">No users yet.</td></tr>`}</tbody></table></div>`;
+  m.querySelectorAll("tr[data-uid]").forEach(tr => {
+    const r = tr.querySelector(".urole"), l = tr.querySelector(".ulink");
+    r.onchange = () => { l.innerHTML = linkOpts(r.value, ""); };
+    tr.querySelector(".usave").onclick = async () => {
+      const uid = tr.dataset.uid, role = r.value, link = l.value || null;
+      if (uid === ME.uid && role !== "admin" && !confirm("You are removing your own admin access. Continue?")) return;
+      if ((role === "student" || role === "parent") && !link) return toast("Link this " + role + " to a student record first.", "bad");
+      const fam = role === "student" || role === "parent";
+      try { await updateDoc(doc(db, "users", uid), {role, studentId: fam ? link : null, staffId: fam ? null : link}); toast("Saved"); ERP.refresh(); }
+      catch(e){ toast(friendly(e), "bad"); }
+    };
+  });
+};
+
+/* =========================================================
+   STUDENT / PARENT
+   ========================================================= */
+async function myStudent(){
+  if (!ME.studentId) return null;
+  const s = await getDoc(doc(db, "students", ME.studentId));
+  return s.exists() ? {id: s.id, ...s.data()} : null;
+}
+const notLinked = (m, t) => m.innerHTML = `<h1>${t}</h1><div class="card empty">Your login isn't linked to a student record yet. Please contact the college office.</div>`;
+VIEWS.profile = async m => {
+  const s = await myStudent(); const t = ME.role === "parent" ? "My ward" : "My profile";
+  if (!s) return notLinked(m, t);
+  m.innerHTML = `<h1>${t}</h1><div class="card"><div class="brand" style="margin-bottom:14px"><div class="logo">${esc((s.name || "?").slice(0,1))}</div><div>${esc(s.name)}<div class="muted" style="font-size:13px;font-weight:500">${esc(s.course)} · Sem/Yr ${esc(s.semester)}</div></div></div>${studentDetails(s)}</div>`;
+};
+VIEWS.myattendance = async m => {
+  const s = await myStudent(); if (!s) return notLinked(m, "Attendance");
+  const a = await studentAttendance(s);
+  const months = {};
+  a.list.forEach(x => { const k = x.date.slice(0,7); months[k] = months[k] || {p:0, t:0}; months[k].t++; if (x.v === "P") months[k].p++; });
+  const absents = a.list.filter(x => x.v === "A").slice(0, 20);
+  m.innerHTML = `<h1>${ME.role === "parent" ? esc(s.name) + "'s attendance" : "My attendance"}</h1>
+    <div class="stats">${stat("Overall", pctPill(pct(a.p, a.t)))}${stat("Present", a.p)}${stat("Absent", a.t - a.p)}${stat("Classes", a.t)}</div>
+    ${a.t && pct(a.p, a.t) < 75 ? `<div class="note">Attendance is below 75%.</div>` : ""}
+    <h3>Month-wise</h3><div class="tw"><table><thead><tr><th>Month</th><th class="num">Present</th><th class="num">Classes</th><th class="num">%</th></tr></thead><tbody>${Object.keys(months).sort().reverse().map(k => `<tr><td>${new Date(k + "-01T00:00:00").toLocaleDateString("en-IN",{month:"long",year:"numeric"})}</td><td class="num">${months[k].p}</td><td class="num">${months[k].t}</td><td class="num">${pctPill(pct(months[k].p, months[k].t))}</td></tr>`).join("") || `<tr><td colspan="4" class="empty">No attendance recorded yet.</td></tr>`}</tbody></table></div>
+    ${absents.length ? `<h3>Recent absences</h3><div class="card" style="font-size:14px">${absents.map(x => fmtDate(x.date)).join(" · ")}</div>` : ""}`;
+};
+VIEWS.myfees = async m => {
+  const s = await myStudent(); if (!s) return notLinked(m, "Fees");
+  const snap = await getDocs(query(collection(db, "fees"), where("studentId", "==", s.id)));
+  const f = cache.myFees = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (b.date || "").localeCompare(a.date || ""));
+  const paid = f.reduce((t,x) => t + Number(x.amount || 0), 0);
+  m.innerHTML = `<h1>${ME.role === "parent" ? esc(s.name) + "'s fees" : "My fees"}</h1>
+    <div class="stats">${stat("Total fee", inr(s.totalFee))}${stat("Paid", inr(paid))}${stat("Due", inr(Math.max(0, Number(s.totalFee || 0) - paid)))}</div>
+    <h3>Receipts</h3><div class="tw"><table><thead><tr><th>Receipt</th><th>Date</th><th>Type</th><th class="num">Amount</th><th></th></tr></thead><tbody>${f.map(x => `<tr><td>${esc(x.receiptNo)}</td><td>${fmtDate(x.date)}</td><td>${esc(x.feeType)}</td><td class="num">${inr(x.amount)}</td><td><button class="btn sm" onclick="ERP.printFee('${x.id}')">Print</button></td></tr>`).join("") || `<tr><td colspan="5" class="empty">No payments yet.</td></tr>`}</tbody></table></div>`;
+};
+</script>
+</body>
+</html>
